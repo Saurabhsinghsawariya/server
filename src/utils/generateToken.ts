@@ -9,7 +9,7 @@ const generateToken = (res: Response, userId: any) => {
   // Set HTTP-Only Cookie (The "Air Alien" Security Layer)
   res.cookie("jwt", token, {
     httpOnly: true, // Client-side JS cannot read this (Prevents XSS)
-    secure: process.env.NODE_ENV !== "development", // Use HTTPS in prod
+    sameSite: process.env.NODE_ENV === "development" ? "strict" : "none", // Allow cross-site in prod
     sameSite: "strict", // Prevent CSRF attacks
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
