@@ -10,7 +10,7 @@ const generateToken = (res: Response, userId: any) => {
   res.cookie("jwt", token, {
     httpOnly: true, // Client-side JS cannot read this (Prevents XSS)
     sameSite: process.env.NODE_ENV === "development" ? "strict" : "none", // Allow cross-site in prod
-    sameSite: "strict", // Prevent CSRF attacks
+    secure: process.env.NODE_ENV !== "development",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 };
