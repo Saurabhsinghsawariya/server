@@ -33,6 +33,7 @@ const corsOptions = {
     "http://localhost:3000",
     "https://twospace-ldh2h876w-saurabh-singhs-projects-d3507bc7.vercel.app",
     "https://client2-xi.vercel.app"
+    "https://client1-8egw.vercel.app/"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
