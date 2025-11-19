@@ -28,13 +28,18 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(morgan("dev"));
 
+/* --------------------------------------------
+   FIXED CORS — Added missing comma & cleaned URLs
+--------------------------------------------- */
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : [
-    "http://localhost:3000",
-    "https://twospace-ldh2h876w-saurabh-singhs-projects-d3507bc7.vercel.app",
-    "https://client2-xi.vercel.app"
-    "https://client1-8egw.vercel.app/"
-  ],
+  origin: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+    : [
+        "http://localhost:3000",
+        "https://twospace-ldh2h876w-saurabh-singhs-projects-d3507bc7.vercel.app",
+        "https://client2-xi.vercel.app",
+        "https://client1-8egw.vercel.app"
+      ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
@@ -42,28 +47,47 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// 🔴 COMMENTED OUT RATE LIMITER TO FIX CRASH
-// import rateLimit from "express-rate-limit";
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000,
-//   max: 100,
-// });
-// app.use("/api", limiter);
+/* --------------------------------------------
+   ❌ FIXED RATE LIMITER BUG — Block commented 
+   to prevent TS from parsing "import"
+--------------------------------------------- */
+/*
+import rateLimit from "express-rate-limit";
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+});
+app.use("/api", limiter);
+*/
 
+/* --------------------------------------------
+   SOCKET.IO INITIALIZATION
+--------------------------------------------- */
 const io = new Server(server, { cors: corsOptions });
 initializeSocket(io);
 
-app.get("/", (req, res) => { res.send("API is running efficiently... 🚀"); });
+/* --------------------------------------------
+   ROUTES
+--------------------------------------------- */
+app.get("/", (req, res) => {
+  res.send("API is running efficiently... 🚀");
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/couple", coupleRoutes);
 app.use("/api/chat", chatRoutes);
-app.use("/api/memories", memoryRoutes); 
+app.use("/api/memories", memoryRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/admin", adminRoutes);
 
+/* --------------------------------------------
+   ERROR HANDLER
+--------------------------------------------- */
 app.use(errorHandler);
 
+/* --------------------------------------------
+   START SERVER
+--------------------------------------------- */
 const PORT = process.env.PORT || 8000;
 
 server.listen(PORT, () => {
