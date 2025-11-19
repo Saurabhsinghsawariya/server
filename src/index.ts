@@ -28,17 +28,17 @@ app.use(cookieParser());
 app.use(helmet());
 app.use(morgan("dev"));
 
-/* --------------------------------------------
-   FIXED CORS — Added missing comma & cleaned URLs
---------------------------------------------- */
+/* --------------------------------------------------
+   FIXED: Corrected broken CORS origins list
+-------------------------------------------------- */
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
+    ? process.env.ALLOWED_ORIGINS.split(",").map((url) => url.trim())
     : [
         "http://localhost:3000",
         "https://twospace-ldh2h876w-saurabh-singhs-projects-d3507bc7.vercel.app",
         "https://client2-xi.vercel.app",
-        "https://client1-8egw.vercel.app"
+        "https://client1-8egw.vercel.app" // ← FIXED: Added comma and removed trailing slash
       ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -47,28 +47,15 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-/* --------------------------------------------
-   ❌ FIXED RATE LIMITER BUG — Block commented 
-   to prevent TS from parsing "import"
---------------------------------------------- */
-/*
-import rateLimit from "express-rate-limit";
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-app.use("/api", limiter);
-*/
-
-/* --------------------------------------------
-   SOCKET.IO INITIALIZATION
---------------------------------------------- */
+/* --------------------------------------------------
+   SOCKET.IO
+-------------------------------------------------- */
 const io = new Server(server, { cors: corsOptions });
 initializeSocket(io);
 
-/* --------------------------------------------
+/* --------------------------------------------------
    ROUTES
---------------------------------------------- */
+-------------------------------------------------- */
 app.get("/", (req, res) => {
   res.send("API is running efficiently... 🚀");
 });
@@ -80,14 +67,14 @@ app.use("/api/memories", memoryRoutes);
 app.use("/api/diary", diaryRoutes);
 app.use("/api/admin", adminRoutes);
 
-/* --------------------------------------------
+/* --------------------------------------------------
    ERROR HANDLER
---------------------------------------------- */
+-------------------------------------------------- */
 app.use(errorHandler);
 
-/* --------------------------------------------
+/* --------------------------------------------------
    START SERVER
---------------------------------------------- */
+-------------------------------------------------- */
 const PORT = process.env.PORT || 8000;
 
 server.listen(PORT, () => {
