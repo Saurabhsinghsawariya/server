@@ -1,0 +1,4 @@
+- [x] Implement getMyStatus function in couple.controller.ts
+- [x] Implement generateInvite function in couple.controller.ts
+- [x] Implement joinCouple function in couple.controller.ts
+- [x] Run npm run build to verify compilation
